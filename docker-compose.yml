@@ -27,7 +27,7 @@ services:
       SSL_CERTIFICATE: /etc/ssl/filebeat.pem
       SSL_KEY: /etc/ssl/filebeat.key
       API_USERNAME: wazuh-wui
-      API_PASSWORD: ${API_PASSWORD}
+      API_PASSWORD: MyS3cr37P450r.*-
     volumes:
       - wazuh_api_configuration:/var/ossec/api/configuration
       - wazuh_etc:/var/ossec/etc
@@ -115,7 +115,7 @@ services:
       DASHBOARD_USERNAME: kibanaserver
       DASHBOARD_PASSWORD: kibanaserver
       API_USERNAME: wazuh-wui
-      API_PASSWORD: ${API_PASSWORD}
+      API_PASSWORD: MyS3cr37P450r.*-
       SERVER_HOST: 0.0.0.0
       SERVER_PORT: 5601
       OPENSEARCH_HOSTS: https://wazuh.indexer:9200
