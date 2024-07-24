@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  wazuh:
+    image: wazuh/wazuh
+    container_name: wazuh
+    hostname: wazuh
+    volumes:
+      - wazuh-data:/var/ossec/data
+    ports:
+      - "1514:1514/udp"
+      - "1515:1515"
+      - "55000:55000"
+    networks:
+      - wazuh-net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    container_name: elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "discovery.type=single-node"
+      - "cluster.name=wazuh-cluster"
+      - "node.name=elasticsearch"
+      - "bootstrap.memory_lock=true"
+      - "indices.id_field_data.enabled=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - wazuh-net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.2
+    container_name: kibana
+    environment:
+      - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+      - "SERVER_NAME=kibana"
+      - "SERVER_HOST=0.0.0.0"
+      - "XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=some-random-string"
+    ports:
+      - "5601:5601"
+    networks:
+      - wazuh-net
+    depends_on:
+      - elasticsearch
+
+volumes:
+  wazuh-data:
+  es-data:
+
+networks:
+  wazuh-net:
+    driver: bridge
